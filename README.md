@@ -2,6 +2,8 @@
 
 Mini bank simulator to learn **gRPC with Rust (`tonic`)** — all four RPC styles in one clean service.
 
+Architecture diagrams (Mermaid, GitHub-ready): **[docs/architecture.md](docs/architecture.md)**
+
 ## RPC coverage
 
 | Style | Method | What you see |
@@ -13,7 +15,7 @@ Mini bank simulator to learn **gRPC with Rust (`tonic`)** — all four RPC style
 
 ## Prerequisites
 
-- Rust (rustup)
+- Rust ([rustup](https://rustup.rs))
 - No system `protoc` needed — build uses `protoc-bin-vendored`
 
 ## Run
@@ -30,11 +32,14 @@ Terminal 2 — client demo (all 4 RPC types):
 cargo run --bin bank-client
 ```
 
+Server listens on `127.0.0.1:50051` (plaintext). You can also call the same methods manually from **Postman Desktop** (gRPC request + import `proto/bank.proto`, TLS off).
+
 ## Layout
 
 ```text
 proto/bank.proto      # contract (source of truth)
 build.rs              # codegen
+docs/architecture.md  # Mermaid diagrams (Ledger + gRPC flows)
 src/
   lib.rs              # shared constants + seed accounts
   store.rs            # in-memory ledger
@@ -45,7 +50,14 @@ src/
 
 ## Learning flow
 
-1. Read `proto/bank.proto`
-2. `cargo build` and inspect generated stubs under `target/`
-3. Trace `Bank` trait impl in `src/service.rs`
-4. Run server + client and match each printed section to an RPC type
+1. Read [`proto/bank.proto`](proto/bank.proto)
+2. Skim [`docs/architecture.md`](docs/architecture.md) for Ledger + RPC diagrams
+3. `cargo build` and inspect generated stubs under `target/`
+4. Trace `Bank` trait impl in [`src/service.rs`](src/service.rs)
+5. Run server + call via Postman or `bank-client`
+
+## Docs
+
+| Doc | Contents |
+|---|---|
+| [Architecture](docs/architecture.md) | Ledger structure, transfer flow, gRPC end-to-end, 4 RPC sequence diagrams |
