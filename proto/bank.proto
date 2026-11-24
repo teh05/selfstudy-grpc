@@ -1,0 +1,66 @@
+syntax = "proto3";
+
+package bank;
+
+// Mini bank service covering all four gRPC method types.
+service Bank {
+  // Unary: one request, one response.
+  rpc GetBalance(GetBalanceRequest) returns (BalanceResponse);
+
+  // Server streaming: one request, many updates.
+  rpc WatchBalance(WatchBalanceRequest) returns (stream BalanceUpdate);
+
+  // Client streaming: many transfers, one summary.
+  rpc BatchTransfer(stream TransferRequest) returns (BatchTransferResponse);
+
+  // Bidirectional: both sides stream transfer events.
+  rpc LiveTransferFeed(stream TransferEvent) returns (stream TransferEvent);
+}
+
+message GetBalanceRequest {
+  string account_id = 1;
+}
+
+message BalanceResponse {
+  string account_id = 1;
+  int64 balance = 2;
+}
+
+message WatchBalanceRequest {
+  string account_id = 1;
+  // How many updates to send before ending the stream (0 = until client cancels).
+  uint32 max_updates = 2;
+}
+
+message BalanceUpdate {
+  string account_id = 1;
+  int64 balance = 2;
+  uint64 sequence = 3;
+}
+
+message TransferRequest {
+  string from_account = 1;
+  string to_account = 2;
+  int64 amount = 3;
+}
+
+message TransferResult {
+  bool ok = 1;
+  string message = 2;
+  string from_account = 3;
+  string to_account = 4;
+  int64 amount = 5;
+}
+
+message BatchTransferResponse {
+  uint32 succeeded = 1;
+  uint32 failed = 2;
+  repeated TransferResult results = 3;
+}
+
+message TransferEvent {
+  string from_account = 1;
+  string to_account = 2;
+  int64 amount = 3;
+  string note = 4;
+}
